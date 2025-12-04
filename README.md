@@ -3,7 +3,7 @@
 
 Модуль можно установить через pip:
 ```bash
-pip install git+https://github.com/yourusername/steam-recsys.git
+pip install git+https://github.com/Maksim-Goncharovskiy/steam-content-based-recsys
 ```
 
 Ну или просто взять папочку `steam_content_based_recsys/` и скопировать куда нужно :) (Не забыв установить зависимости из requirements.txt само собой)
