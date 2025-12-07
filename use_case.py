@@ -5,7 +5,7 @@ from steam_content_based_recsys import SteamContentBasedRecSys, ContentBasedReco
 if __name__ == "__main__":
     data = pd.read_csv("../combined_steam_games.csv")
     
-    recommender = SteamContentBasedRecSys().fit(TfidfSteamDatasetVectorizer, data)
+    recommender = SteamContentBasedRecSys().fit(TfidfSteamDatasetVectorizer(), data)
 
     liked_games = [20200, 655370, 1732930, 1355720, 1139950]
 
@@ -13,3 +13,5 @@ if __name__ == "__main__":
 
     for sample in recommendations:
         print(f"Игра с id: {sample.recommendation} похожа на игру {sample.original} с коэффициентом = {sample.similarity}")
+
+    recommender.save()

@@ -35,11 +35,11 @@ class SteamContentBasedRecSys:
                 raise InvalidSteamDataset(f"Missing column: {col}")
         return True
         
-    def fit(self, vectorizer: type, dataset: pd.DataFrame):
+    def fit(self, vectorizer: SteamDatasetVectorizer, dataset: pd.DataFrame):
         """Обучение рекомендательной системы"""
         # валидация входных данных
         self._validate_dataset(dataset)
-        if not issubclass(vectorizer, SteamDatasetVectorizer):
+        if not isinstance(vectorizer, SteamDatasetVectorizer):
             raise InvalidVectorizerType("vectorizer must be subclass of SteamDatasetVectorizer class")
         
         # Сопоставления между id игр и их индексами в таблице (пригодится при сравнении векторов)
@@ -47,9 +47,11 @@ class SteamContentBasedRecSys:
         self.id_to_idx = {item[1]: item[0] for item in self.idx_to_id.items()}
 
         # получаем векторы
-        vectors = vectorizer().vectorize_dataset(dataset)
+        vectors = vectorizer.vectorize_dataset(dataset).astype(np.float32)
+        faiss.normalize_L2(vectors)
         
         assert vectors.shape[0] == dataset.shape[0], "Количество игр должно совпадать!"
+
         
         self.index = faiss.IndexFlatIP(vectors.shape[1])  # индекс для расчета косинусной близости
         self.index.add(vectors)
@@ -89,8 +91,10 @@ class SteamContentBasedRecSys:
 
         self.index = faiss.read_index(index_path)
         with open(idx2id_path, 'r') as idx2id_file:
-            self.idx_to_id: dict = json.load(idx2id_file)
-        self.id_to_idx = {item[1]: item[0] for item in self.idx_to_id.items()}
+            loaded_idx_to_id: dict = json.load(idx2id_file)
+
+        self.idx_to_id = {int(k): int(v) for k, v in loaded_idx_to_id.items()}
+        self.id_to_idx = {int(v): int(k) for k, v in loaded_idx_to_id.items()}
         self.fitted = True
         return self
 
@@ -99,6 +103,7 @@ class SteamContentBasedRecSys:
         if game_id not in self.id_to_idx:
             raise GameNotFound(f"Game with id={game_id} does not exists")
         game_idx = self.id_to_idx[game_id]
+        
         return self.index.reconstruct(game_idx)
 
     
