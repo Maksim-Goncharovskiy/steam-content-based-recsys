@@ -1,5 +1,7 @@
 # Steam Recommendation System
-Это модуль content-based рекомендательной системы. 
+Это модуль content-based рекомендательной системы, разработанный для датасета "Steam Games Dataset": https://www.kaggle.com/datasets/fronkongames/steam-games-dataset .
+
+Цель модуля - сформировать удобный общий интерфейс для разных методов content-based рекомендаций для последующего оборачивания их в API-сервис рекомендаций. 
 
 Модуль можно установить через pip:
 ```bash
@@ -17,7 +19,7 @@ from steam_content_based_recsys import SteamContentBasedRecSys, TfidfSteamDatase
 data = pd.read_csv("../combined_steam_games.csv")
 
 # обучаем рекомендательную систему
-recsys = SteamContentBasedRecSys().fit(TfidfSteamDatasetVectorizer, data)
+recsys = SteamContentBasedRecSys().fit(TfidfSteamDatasetVectorizer(), data)
 
 
 # имитация списка игр, которые понравились пользователю
