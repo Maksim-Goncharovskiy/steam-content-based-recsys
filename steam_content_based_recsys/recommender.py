@@ -127,7 +127,7 @@ class SteamContentBasedRecSys:
             rec_i = indexes[i]
             dists_i = distances[i]
             for j in range(M):
-                merged.append((liked_i, rec_i[j], dists_i[j]))
+                merged.append((liked_i, self.idx_to_id[rec_i[j]], dists_i[j]))
                 
         merged = sorted(merged, key=lambda x: x[2], reverse=True)
     
